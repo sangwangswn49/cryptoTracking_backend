@@ -1,9 +1,12 @@
 package com.example.crypto_backend.service;
 
-import com.example.crypto_backend.model.User;
+import com.example.crypto_backend.dto.request.UserSignupRequest;
+import com.example.crypto_backend.dto.response.UserResponse;
+import com.example.crypto_backend.entity.User;
 import com.example.crypto_backend.repository.UserRepo;
 import com.mongodb.DuplicateKeyException;
 import com.mongodb.MongoWriteException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -42,8 +45,62 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public List<User> getAllUsers() {
-        return userRepo.findAll();
+    public User updateUser(User user) {
+        try {
+            User existingUser = getUserByUserNameSimply(user.getUserName());
+            if (existingUser == null) {
+                throw new UsernameNotFoundException("User not found with username: " + user.getUserName());
+            }
+            existingUser.setName(user.getName());
+            existingUser.setRole(user.getRole());
+            existingUser.setCoinList(user.getCoinList());
+            existingUser.setAssets(user.getAssets());
+            existingUser.setPassWord(user.getPassWord());
+            if (!isBCryptEncoded(existingUser.getPassWord())) {
+                existingUser.setPassWord(passwordEncoder.encode(user.getPassWord()));
+            }
+            return userRepo.save(existingUser);
+        } catch (DuplicateKeyException e) {
+            throw new IllegalArgumentException("User with the same username already exists", e);
+        } catch (MongoWriteException e) {
+            throw new RuntimeException("Error writing to the database", e);
+        }
+    }
+
+    public User signUpUser(UserSignupRequest user) {
+        User newUser = new User();
+        newUser.setUserName(user.getUserName());
+        newUser.setPassWord(user.getPassWord());
+        newUser.setName(user.getName());
+        newUser.setRole("USER");
+        try {
+            if (!isBCryptEncoded(user.getPassWord())) {
+                user.setPassWord(passwordEncoder.encode(newUser.getPassWord()));
+            }
+            return userRepo.save(newUser);
+        } catch (DuplicateKeyException e) {
+            throw new IllegalArgumentException("User with the same username already exists", e);
+        } catch (MongoWriteException e) {
+            throw new RuntimeException("Error writing to the database", e);
+        }
+    }
+
+//    public List<User> getAllUsers() {
+//        return userRepo.findAll();
+//    }
+
+    public UserResponse getUserResponseByUserName(String userName) {
+        User user = getUserByUserNameSimply(userName);
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found with username: " + userName);
+        }
+        return new UserResponse(
+                user.getUserName(),
+                user.getName(),
+                user.getRole(),
+                user.getCoinList(),
+                user.getAssets()
+        );
     }
 
     public User getUserByUserName(String userName) {
@@ -53,6 +110,21 @@ public class UserService implements UserDetailsService {
 
     public User getUserByUserNameSimply(String userName) {
         return userRepo.getUserByUserName(userName).orElse(null);
+    }
+
+    public void deleteUserByUserName(String userName) {
+        try{
+            User existingUser = getUserByUserNameSimply(userName);
+            if (existingUser == null) {
+                System.out.println("User with username: " + userName + " does not exist.");
+            }
+            else {
+                userRepo.delete(existingUser);
+            }
+        } catch (Exception e){
+            System.out.println("An error occurred while deleting the user: " + e.getMessage());
+        }
+        System.out.println("User with username: " + userName + " has been deleted successfully.");
     }
 
     @Override

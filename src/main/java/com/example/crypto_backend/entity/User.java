@@ -1,6 +1,5 @@
-package com.example.crypto_backend.model;
+package com.example.crypto_backend.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -12,7 +11,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 
 import java.util.List;
-import java.util.Set;
 
 @Document(collection = "user")
 @Data

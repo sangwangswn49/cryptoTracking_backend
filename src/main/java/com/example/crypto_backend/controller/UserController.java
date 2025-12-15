@@ -1,6 +1,8 @@
 package com.example.crypto_backend.controller;
 
-import com.example.crypto_backend.model.User;
+import com.example.crypto_backend.dto.request.UserSignupRequest;
+import com.example.crypto_backend.dto.response.UserResponse;
+import com.example.crypto_backend.entity.User;
 import com.example.crypto_backend.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,9 +21,9 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createUser(@RequestBody User user, UriComponentsBuilder ucb) {
+    public ResponseEntity<?> createUser(@RequestBody UserSignupRequest user, UriComponentsBuilder ucb) {
         try {
-            User savedUser = userService.createUser(user);
+            User savedUser = userService.signUpUser(user);
             URI locationOfNewUser = ucb
                     .path("/users/{id}")
                     .buildAndExpand(savedUser.getId())
@@ -33,25 +35,44 @@ public class UserController {
         }
     }
 
-    @GetMapping
-    public ResponseEntity<?> getAllUsers() {
+//    @GetMapping
+//    public ResponseEntity<?> getAllUsers() {
+//        try {
+//            List<User> users = userService.getAllUsers();
+//            return ResponseEntity.ok(users);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return ResponseEntity.internalServerError().build();
+//        }
+//    }
+
+    @GetMapping("/{userName}")
+    public ResponseEntity<?> getUser(@PathVariable String userName) {
         try {
-            List<User> users = userService.getAllUsers();
-            return ResponseEntity.ok(users);
+            UserResponse user = userService.getUserResponseByUserName(userName);
+            return ResponseEntity.ok(user);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
         }
     }
 
-    @GetMapping("/{userName}")
-    public ResponseEntity<?> getUser(@PathVariable String userName) {
+    @PostMapping("/update")
+    public ResponseEntity<?> updateUser(@RequestBody User user) {
         try {
-            User user = userService.getUserByUserName(userName);
-            if (user == null) {
-                return ResponseEntity.notFound().build();
-            }
-            return ResponseEntity.ok(user);
+            User updatedUser = userService.updateUser(user);
+            return ResponseEntity.ok(updatedUser);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping("/delete/{userName}")
+    public ResponseEntity<?> deleteUser(@PathVariable String userName) {
+        try {
+            userService.deleteUserByUserName(userName);
+            return ResponseEntity.ok().build();
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();

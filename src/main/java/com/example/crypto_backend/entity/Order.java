@@ -1,4 +1,4 @@
-package com.example.crypto_backend.model;
+package com.example.crypto_backend.entity;
 
 import com.example.crypto_backend.Enum.OrderStatus;
 import com.example.crypto_backend.Enum.OrderType;

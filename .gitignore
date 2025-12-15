@@ -41,6 +41,5 @@ Thumbs.db
 # ----------------------------
 # Environment / credentials
 .env
-application-*.yml
-application-*.properties
-application.properties
+**/application.properties
+**/application-*.properties

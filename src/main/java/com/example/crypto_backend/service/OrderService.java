@@ -2,7 +2,7 @@ package com.example.crypto_backend.service;
 
 import com.example.crypto_backend.Enum.OrderStatus;
 import com.example.crypto_backend.Enum.OrderType;
-import com.example.crypto_backend.model.*;
+import com.example.crypto_backend.entity.*;
 import com.example.crypto_backend.repository.OrderRepo;
 import com.mongodb.MongoWriteException;
 import org.springframework.data.domain.Page;

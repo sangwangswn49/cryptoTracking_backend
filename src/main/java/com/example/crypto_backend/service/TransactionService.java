@@ -1,6 +1,6 @@
 package com.example.crypto_backend.service;
 
-import com.example.crypto_backend.model.Transaction;
+import com.example.crypto_backend.entity.Transaction;
 import com.example.crypto_backend.repository.TransactionRepo;
 import com.mongodb.MongoWriteException;
 import org.springframework.stereotype.Service;

@@ -1,8 +1,9 @@
 package com.example.crypto_backend.controller;
 
+import com.example.crypto_backend.dto.request.UserSignupRequest;
 import com.example.crypto_backend.jwt.JwtUtil;
-import com.example.crypto_backend.DTO.userDTO;
-import com.example.crypto_backend.model.User;
+import com.example.crypto_backend.dto.request.UserLoginRequest;
+import com.example.crypto_backend.entity.User;
 import com.example.crypto_backend.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -30,7 +31,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody @Valid userDTO loginInfo) {
+    public ResponseEntity<?> login(@RequestBody @Valid UserLoginRequest loginInfo) {
         try {
             // Authenticate the user
             Authentication authentication = authenticationManager.authenticate(
@@ -54,13 +55,12 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody @Valid User user) {
+    public ResponseEntity<?> register(@RequestBody @Valid UserSignupRequest user) {
         try {
             if (userService.getUserByUserNameSimply(user.getUserName()) != null) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", "Username already exists"));
             }
-            user.setRole("USER"); // Default role for new users
-            User createdUser = userService.createUser(user);
+            User createdUser = userService.signUpUser(user);
 
             // If registration is successful, generate a JWT token for the new user
             String jwt = jwtUtil.generateToken(createdUser.getUserName(), createdUser.getRole());

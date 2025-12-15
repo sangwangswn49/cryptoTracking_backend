@@ -1,17 +1,14 @@
 package com.example.crypto_backend.controller;
 
-import com.example.crypto_backend.model.Order;
+import com.example.crypto_backend.entity.Order;
 import com.example.crypto_backend.service.OrderService;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
-import java.util.Objects;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:5173")

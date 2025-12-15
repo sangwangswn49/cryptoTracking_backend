@@ -1,7 +1,6 @@
 package com.example.crypto_backend.repository;
 
-import com.example.crypto_backend.model.Order;
-
+import com.example.crypto_backend.entity.Order;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;

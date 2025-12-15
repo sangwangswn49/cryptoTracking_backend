@@ -1,4 +1,4 @@
-package com.example.crypto_backend.model;
+package com.example.crypto_backend.entity;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 
